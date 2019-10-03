@@ -1,24 +1,25 @@
 package main
 import (
-	"fmt"
-	"io/ioutil"
-	"net/http"
+    "fmt"
+    "log"
+    "net/http"
+    "os"
 )
+func handler(w http.ResponseWriter, r *http.Request) {
+    fmt.Fprintf(w, "Hello World%s!", r.URL.Path[1:])
+    fmt.Println("RESTfulServ. on:8093, Controller:",r.URL.Path[1:])
+}
 func main() {
-	url := "http://tour.golang.org/welcome/1"
-	fmt.Printf("HTML code of %s ...\n", url)
-	resp, err := http.Get(url)
-	// handle the error if there is one
-	if err != nil {
-		panic(err)
-	}
-	// do this now so it won't be forgotten
-	defer resp.Body.Close()
-	// reads html as a slice of bytes
-	html, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		panic(err)
-	}
-	// show the HTML code as a string %s
-	fmt.Printf("%s\n", html)
+    http.HandleFunc("/", handler)
+    fmt.Println("Starting Restful services...")
+    fmt.Println("Using port:8093")
+    err := http.ListenAndServe(":8093", nil)
+    log.Print(err)
+    errorHandler(err)
+}
+func errorHandler(err error){
+if err!=nil {
+    fmt.Println(err)
+    os.Exit(1)
+}
 }
